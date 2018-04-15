@@ -1,0 +1,23 @@
+
+			/*
+			BufferedImage convertedImage = new BufferedImage(image.getWidth(), image.getHeight(),
+					BufferedImage.TYPE_INT_RGB);
+
+			convertedImage.createGraphics().drawRenderedImage(image, null);
+
+			// ImageIO.write(convertedImage, "bmp", new File(outputFile));
+*/
+			BinaryBitmap binaryBitmap;
+
+		
+			
+			binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
+			
+			Long endTime2 = System.nanoTime();
+			
+			// ImageIO.read(new FileInputStream(file)))));
+			Result result = new MultiFormatReader().decode(binaryBitmap);
+			
+			Long endTime3 = System.nanoTime();
+			
+			System.out.println(result.getText());
