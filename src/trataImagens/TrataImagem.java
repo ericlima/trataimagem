@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 
 public class TrataImagem {
 
-	int bloco = 45;
-	int bloco2 = 33;
+	int blocao = 45;
+	int bloquinho = 33;
 
 	int z = 0;
 
@@ -22,7 +22,7 @@ public class TrataImagem {
 
 	BufferedImage image = null;
 	
-	BufferedImage timage = null;
+	BufferedImage coluna = null;
 	
 	BufferedImage p1 = null;
 	BufferedImage p2 = null;
@@ -37,12 +37,12 @@ public class TrataImagem {
 		
 		try {
 			
-			timage = ImageIO.read(file);
+			coluna = ImageIO.read(file);
 			
-			max_x = timage.getWidth();
-			max_y = timage.getHeight();
+			max_x = coluna.getWidth();
+			max_y = coluna.getHeight();
 			
-			Ponto ponto1 = busca_n2(0,0,max_x, max_y);
+			Ponto ponto1 = busca_n2(0,0,max_x-1, max_y-1);
 			
 			System.out.println(ponto1);			
 
@@ -93,37 +93,78 @@ public class TrataImagem {
 
 			// procura bloco1
 			
-			Ponto ponto1 = busca_n0(0, 0, max_x/2, max_y/2);
+			Ponto ponto1 = busca_blocao(0, 0, max_x/2, max_y/2);
 			
 			System.out.println(ponto1);			
 
 			// procura bloco 2
 
-			Ponto ponto2 = busca_n0(max_x/2, 0, max_x - (max_x/2) , max_y/2);
+			Ponto ponto2 = busca_blocao(max_x/2, 0, max_x - (max_x/2) , max_y/2);
 
 			System.out.println(ponto2);
 			
 			// procura bloco 3
 			
-			Ponto ponto3 = busca_n0(0,max_y/2,max_x - (max_x/2), 1700);
+			Ponto ponto3 = busca_blocao(0,max_y/2,max_x - (max_x/2), 1700);
 
 			System.out.println(ponto3);
 			
+			//----------------------------------------------------------
+			
 			int largura = (ponto2.getX()-ponto1.getX())/4;
 			
-			p1 = image.getSubimage(ponto1.getX()+bloco, ponto1.getY(), largura, 1700);
+			coluna = image.getSubimage(ponto1.getX(), ponto1.getY(), largura, 1700);
 
-			p2 = image.getSubimage(ponto1.getX()+largura+1, ponto1.getY(), largura, 1700);
+//			Ponto c1 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
+//			
+//			int sublargura = coluna.getWidth() - c1.getX();
+//			int subaltura = coluna.getHeight() - c1.getY();
+//			
+//			p1 = coluna.getSubimage(c1.getX()-2, c1.getY()-2,sublargura,subaltura);
 
-			p3 = image.getSubimage(ponto1.getX()+(largura*2)+1, ponto1.getY(), largura, 1700);
+			ImageIO.write(coluna, "jpg", outputfile1);
 
-			p4 = image.getSubimage(ponto1.getX()+(largura*3)+1, ponto1.getY(), largura, 1700);
+			//----------------------------------------------------------
 			
-			ImageIO.write(p1, "jpg", outputfile1);
-			ImageIO.write(p2, "jpg", outputfile2);
-			ImageIO.write(p3, "jpg", outputfile3);
-			ImageIO.write(p4, "jpg", outputfile4);
+			coluna = image.getSubimage(ponto1.getX()+largura+1, ponto1.getY(), largura, 1700);
 			
+//			Ponto c2 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
+//			
+//			sublargura = coluna.getWidth() - c2.getX();
+//			subaltura = coluna.getHeight() - c2.getY();
+//			
+//			p2 = coluna.getSubimage(c2.getX()-2, c2.getY()-2,sublargura,subaltura);
+			
+			ImageIO.write(coluna, "jpg", outputfile2);
+			
+			//----------------------------------------------------------
+			
+			coluna = image.getSubimage(ponto1.getX()+(largura*2)+1, ponto1.getY(), largura, 1700);
+			
+//			Ponto c3 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
+//			
+//			sublargura = coluna.getWidth() - c3.getX();
+//			subaltura = coluna.getHeight() - c3.getY();
+//			
+//			p3 = coluna.getSubimage(c3.getX()-2, c3.getY()-2,sublargura,subaltura);
+			
+			ImageIO.write(coluna, "jpg", outputfile3);
+			
+			//----------------------------------------------------------
+			
+			coluna = image.getSubimage(ponto1.getX()+(largura*3)+1, ponto1.getY(), largura, 1700);
+			
+//			Ponto c4 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
+//			
+//			sublargura = coluna.getWidth() - c4.getX();
+//			subaltura = coluna.getHeight() - c4.getY();
+//			
+//			p4 = coluna.getSubimage(c4.getX()-2, c4.getY()-2,sublargura,subaltura);
+			
+			ImageIO.write(coluna, "jpg", outputfile4);
+			
+			//----------------------------------------------------------
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
@@ -133,7 +174,7 @@ public class TrataImagem {
 		}
 	}
 
-	private Ponto busca_n0(int xx, int yy, int ww, int hh) {
+	private Ponto busca_blocao(int xx, int yy, int ww, int hh) {
 		//	System.out.println(String.format("%1$d %2$d %3$d %4$d", xx,yy,ww,hh));
 		Long initTime = System.nanoTime();
 		Ponto retorno = new Ponto();
@@ -151,6 +192,7 @@ public class TrataImagem {
 							retorno.setY(n0y);
 							z = 1;
 							//log = String.format("ponto  = %1$d, %2$d ", n0x, n0y);
+							//System.out.println(log);
 							for (int w = 0; w <= log.length() - 1; w++) {
 								try {
 									saida.write(log.charAt(w));
@@ -159,7 +201,7 @@ public class TrataImagem {
 									e.printStackTrace();
 								}
 							}						
-							//System.out.println(log);
+							
 							break;
 						}
 					}
@@ -190,24 +232,21 @@ public class TrataImagem {
 		int n0y = 0;
 		int p = 0;
 		try {
+		for (n0y = yy; n0y <= (yy+hh); n0y++) {
 			for (n0x = xx; n0x <= (xx+ww); n0x++) {
-				for (n0y = yy; n0y <= (yy+hh); n0y++) {
-					p = timage.getRGB(n0x, n0y);
+					p = coluna.getRGB(n0x, n0y);
 					if (p != -1) {
 						if (busca_n3(n0x, n0y)) {
 							retorno.setX(n0x);
 							retorno.setY(n0y);
 							z = 1;
-							//log = String.format("ponto  = %1$d, %2$d ", n0x, n0y);
 							for (int w = 0; w <= log.length() - 1; w++) {
 								try {
 									saida.write(log.charAt(w));
 								} catch (IOException e) {
-									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
 							}						
-							//System.out.println(log);
 							break;
 						}
 					}
@@ -232,20 +271,23 @@ public class TrataImagem {
 	
 	private boolean busca_n1(int x, int y) {
 		int marca = 1;
-		for (int _x = 0; _x <= bloco; _x++) {
-			for (int _y = 0; _y <= bloco; _y++) {
+		for (int _x = 0; _x <= blocao; _x++) {
+			for (int _y = 0; _y <= blocao; _y++) {
 				if (image.getRGB(_x + x, _y + y) == -1) {
 					marca = 0;
+					break;
 				}
 			}
+			if (marca==0)
+				break;
 		}
 		return marca == 1;
 	}
 	
 	private boolean busca_n3(int x, int y) {
 		int marca = 1;
-		for (int _x = 0; _x <= bloco2; _x++) {
-			if (timage.getRGB(_x + x, y) == -1) {
+		for (int _x = 0; _x <= bloquinho; _x++) {
+			if (coluna.getRGB(_x + x, y) == -1) {
 				marca = 0;
 			}
 		}

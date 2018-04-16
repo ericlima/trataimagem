@@ -8,7 +8,7 @@ public class Teste {
 		
 		try {
 			
-			imagem.processa("/home/eric/cadernos/folhas/folha2.tif");
+			imagem.processa("/home/eric/cadernos/folhas/folha1.tif");
 			
 			//imagem.apura("p1.jpg");			
 			
