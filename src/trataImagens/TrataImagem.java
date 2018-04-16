@@ -75,39 +75,39 @@ public class TrataImagem {
 		try {
 
 			// leitura da pagina
-			//Long initTime = System.nanoTime();
+			Long initTime = System.nanoTime();
 
 			image = ImageIO.read(file);
 
-			//Long endTime1 = System.nanoTime();
+			Long endTime1 = System.nanoTime();
 
-			//double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
+			double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
 
-			//System.out.println("tempo leitura imagem:" + seconds);
+			System.out.println("tempo leitura imagem:" + seconds);
 
 			max_x = image.getWidth();
 			max_y = image.getHeight();
 
-			//log = String.format("max = %1$d, %2$d", max_x, max_y);
-			//System.out.println(log);
+			log = String.format("max = %1$d, %2$d", max_x, max_y);
+			System.out.println(log);
 
 			// procura bloco1
 			
 			Ponto ponto1 = busca_blocao(0, 0, max_x/2, max_y/2);
 			
-			//System.out.println(ponto1);			
+			System.out.println(ponto1);			
 
 			// procura bloco 2
 
 			Ponto ponto2 = busca_blocao(max_x/2, 0, max_x - (max_x/2) , max_y/2);
 
-			//System.out.println(ponto2);
+			System.out.println(ponto2);
 			
 			// procura bloco 3
 			
 			Ponto ponto3 = busca_blocao(0,max_y/2,max_x - (max_x/2), 1700);
 
-			//System.out.println(ponto3);
+			System.out.println(ponto3);
 			
 			//----------------------------------------------------------
 			
@@ -169,7 +169,7 @@ public class TrataImagem {
 			System.out.println(e.getMessage());
 		} finally {
 			saida.close();
-			//System.out.println("fim");
+			System.out.println("fim");
 
 		}
 	}
@@ -214,11 +214,11 @@ public class TrataImagem {
 			System.out.println(log + ' ' + p);
 			throw e;
 		}
-		//long endTime1 = System.nanoTime();
+		long endTime1 = System.nanoTime();
 
-		//double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
+		double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
 
-		//System.out.println("tempo:" + seconds);
+		System.out.println("tempo:" + seconds);
 		
 		return retorno;
 	}
@@ -259,11 +259,11 @@ public class TrataImagem {
 			System.out.println(log + ' ' + p);
 			throw e;
 		}
-		//long endTime1 = System.nanoTime();
+		long endTime1 = System.nanoTime();
 
-		//double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
+		double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
 
-		//System.out.println("tempo:" + seconds);
+		System.out.println("tempo:" + seconds);
 		
 		return retorno;
 	}
