@@ -9,8 +9,7 @@ public class Teste {
 		try {
 			
 			imagem.processa("/home/eric/cadernos/folhas/folha1.tif");
-			
-			//imagem.apura("p1.jpg");			
+			//imagem.processa("/home/eric/cadernos/prova52t.tif");
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

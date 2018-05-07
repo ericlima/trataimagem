@@ -1,5 +1,10 @@
 package trataImagens;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +15,7 @@ import javax.imageio.ImageIO;
 
 public class TrataImagem {
 
-	int blocao = 45;
+	int blocao = 35;
 	int bloquinho = 33;
 
 	int z = 0;
@@ -65,6 +70,11 @@ public class TrataImagem {
 		File outputfile3 = new File("/home/eric/cadernos/p3.jpg");
 		File outputfile4 = new File("/home/eric/cadernos/p4.jpg");
 		
+		outputfile1.delete();
+		outputfile2.delete();
+		outputfile3.delete();
+		outputfile4.delete();
+		
 		try {
 			saida = new FileOutputStream("/home/eric/cadernos/saida.txt");
 		} catch (FileNotFoundException e1) {
@@ -95,6 +105,10 @@ public class TrataImagem {
 			
 			Ponto ponto1 = busca_blocao(0, 0, max_x/2, max_y/2);
 			
+			if ((ponto1.getX()==0) && (ponto1.getY()==0)) {
+				throw new Exception("ponto1 não encontrado");
+			}
+			
 			System.out.println(ponto1);			
 
 			// procura bloco 2
@@ -112,9 +126,41 @@ public class TrataImagem {
 			//----------------------------------------------------------
 			
 			int largura = (ponto2.getX()-ponto1.getX())/4;
+			// int altura = (ponto3.getY()-ponto1.getY());
 			
-			coluna = image.getSubimage(ponto1.getX(), ponto1.getY(), largura, 1700);
+			int altura = 1700;
+			
+			// verifica se necessita rotacao
+			if (false && (ponto1.getY() != ponto2.getY())) {
 
+				double cat1 = (double) (ponto2.getX() - ponto1.getX());
+				
+				double cat2 = 0d;
+				
+				boolean clockwise = true;
+				
+				if (ponto2.getY() > ponto1.getY()) { 
+					cat2 = (double) (ponto2.getY() - ponto1.getY());
+					clockwise = false;
+				} else {
+					cat2 = (double) (ponto1.getY() - ponto2.getY());
+					clockwise = true;
+				}
+				
+				double hypt = Math.tan((cat1 / Math.sqrt((cat1*cat1)+(cat2*cat2))));
+				
+				if (clockwise) {
+					rotaciona(image,hypt);
+				} else {
+					rotaciona(image,hypt*-1);
+				}
+				
+			}			
+			
+			coluna = image.getSubimage(ponto1.getX(), ponto1.getY(), largura, altura);
+			
+			tracos(coluna,96,114);		        
+			
 //			Ponto c1 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
 //			
 //			int sublargura = coluna.getWidth() - c1.getX();
@@ -126,7 +172,9 @@ public class TrataImagem {
 
 			//----------------------------------------------------------
 			
-			coluna = image.getSubimage(ponto1.getX()+largura+1, ponto1.getY(), largura, 1700);
+			coluna = image.getSubimage(ponto1.getX()+largura+1, ponto1.getY(), largura, altura);
+			
+			tracos(coluna,92,114);	
 			
 //			Ponto c2 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
 //			
@@ -139,7 +187,9 @@ public class TrataImagem {
 			
 			//----------------------------------------------------------
 			
-			coluna = image.getSubimage(ponto1.getX()+(largura*2)+1, ponto1.getY(), largura, 1700);
+			coluna = image.getSubimage(ponto1.getX()+(largura*2)+1, ponto1.getY(), largura, altura);
+			
+			tracos(coluna,85,114);	
 			
 //			Ponto c3 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
 //			
@@ -152,7 +202,9 @@ public class TrataImagem {
 			
 			//----------------------------------------------------------
 			
-			coluna = image.getSubimage(ponto1.getX()+(largura*3)+1, ponto1.getY(), largura, 1700);
+			coluna = image.getSubimage(ponto1.getX()+(largura*3)+1, ponto1.getY(), largura, altura);
+			
+			tracos(coluna,85,114);	
 			
 //			Ponto c4 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
 //			
@@ -172,6 +224,40 @@ public class TrataImagem {
 			System.out.println("fim");
 
 		}
+	}
+	
+	private void rotaciona(BufferedImage four2, double graus) {
+		AffineTransform at = new AffineTransform();
+		at.translate(four2.getWidth() / 2, four2.getHeight() / 2);
+		at.rotate((Math.PI / 360) * graus);
+		// at.scale(0.5, 0.5);
+		at.translate(-four2.getWidth()/2, -four2.getHeight()/2);
+		Graphics2D g2d = (Graphics2D) four2.getGraphics();
+		g2d.drawImage(four2, at, null);
+		g2d.dispose();
+	}
+	
+	private void tracos(BufferedImage img, int xini, int yini) {
+		
+		try {
+		Dimension imgDim = new Dimension(img.getWidth(),img.getHeight());
+		Graphics2D g2d = img.createGraphics();
+		
+        g2d.setBackground(Color.WHITE);
+        g2d.setColor(Color.BLACK);
+        BasicStroke bs = new BasicStroke(1);
+        g2d.setStroke(bs);
+        
+        for(int i=xini; i<(imgDim.width);i=i+38) {
+        	g2d.drawLine(i,0, i, imgDim.height);
+        }
+        
+        for(int i=yini; i<(imgDim.height);i=i+62) {
+        	g2d.drawLine(0, i, imgDim.width, i);
+        }
+		} catch(Exception e) {
+		}
+        
 	}
 
 	private Ponto busca_blocao(int xx, int yy, int ww, int hh) {
