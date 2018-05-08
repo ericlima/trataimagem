@@ -8,8 +8,8 @@ public class Teste {
 		
 		try {
 			
-			imagem.processa("/home/eric/cadernos/folhas/folha1.tif");
-			//imagem.processa("/home/eric/cadernos/prova52t.tif");
+			imagem.processa("/home/eric/cadernos/folhas/folha2.tif");
+			//imagem.processa("/home/eric/cadernos/prova5t.jpg");
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

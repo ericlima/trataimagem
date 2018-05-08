@@ -7,18 +7,27 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+
 public class TrataImagem {
 
-	int blocao = 35;
+	int perc_preenche = 30; // 30%
+	
+	int blocao = 38;
 	int bloquinho = 33;
 
 	int z = 0;
+	
+	int[][] resultados = new int[25][5];
 
 	int max_x = 0;
 	int max_y = 0;
@@ -36,31 +45,6 @@ public class TrataImagem {
 
 	FileOutputStream saida = null;
 	
-	public void apura(String trecho) {
-		
-		File file = new File("/home/eric/cadernos/" + trecho);
-		
-		try {
-			
-			coluna = ImageIO.read(file);
-			
-			max_x = coluna.getWidth();
-			max_y = coluna.getHeight();
-			
-			Ponto ponto1 = busca_n2(0,0,max_x-1, max_y-1);
-			
-			System.out.println(ponto1);			
-
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-
 	public void processa(String arquivo) throws IOException {
 
 		File file = new File(arquivo);
@@ -70,18 +54,15 @@ public class TrataImagem {
 		File outputfile3 = new File("/home/eric/cadernos/p3.jpg");
 		File outputfile4 = new File("/home/eric/cadernos/p4.jpg");
 		
+		File outputfile5 = new File("/home/eric/cadernos/cbarra.jpg");
+		File outputfile6 = new File("/home/eric/cadernos/ausente.jpg");
+		
 		outputfile1.delete();
 		outputfile2.delete();
 		outputfile3.delete();
 		outputfile4.delete();
+		outputfile5.delete();
 		
-		try {
-			saida = new FileOutputStream("/home/eric/cadernos/saida.txt");
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
 		try {
 
 			// leitura da pagina
@@ -126,7 +107,7 @@ public class TrataImagem {
 			//----------------------------------------------------------
 			
 			int largura = (ponto2.getX()-ponto1.getX())/4;
-			// int altura = (ponto3.getY()-ponto1.getY());
+			//int altura = (ponto3.getY()-ponto1.getY());
 			
 			int altura = 1700;
 			
@@ -156,32 +137,41 @@ public class TrataImagem {
 				}
 				
 			}			
+
+			//----------------------------------------------------------
+			coluna = image.getSubimage(ponto2.getX()-100, ponto2.getY()+1800, 38, 200);
+			
+			ImageIO.write(coluna, "jpg", outputfile6);
+			
+			//----------------------------------------------------------
+			// pega codigo barras
+			coluna = image.getSubimage(ponto2.getX()-627, ponto2.getY()-445, 627, 445);
+			
+			ImageIO.write(coluna, "jpg", outputfile5);
+			
+			BinaryBitmap binaryBitmap;
+			
+			binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(coluna)));
+			
+			Result result = new MultiFormatReader().decode(binaryBitmap);
+			
+			System.out.println("codigo de barra=" +result.getText());
+			//----------------------------------------------------------
+			// p1
 			
 			coluna = image.getSubimage(ponto1.getX(), ponto1.getY(), largura, altura);
 			
-			tracos(coluna,96,114);		        
+			tracos(coluna,96,114);
 			
-//			Ponto c1 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
-//			
-//			int sublargura = coluna.getWidth() - c1.getX();
-//			int subaltura = coluna.getHeight() - c1.getY();
-//			
-//			p1 = coluna.getSubimage(c1.getX()-2, c1.getY()-2,sublargura,subaltura);
-
 			ImageIO.write(coluna, "jpg", outputfile1);
-
+			
+			quadrantes(coluna,96,114);			
+			
 			//----------------------------------------------------------
 			
 			coluna = image.getSubimage(ponto1.getX()+largura+1, ponto1.getY(), largura, altura);
 			
 			tracos(coluna,92,114);	
-			
-//			Ponto c2 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
-//			
-//			sublargura = coluna.getWidth() - c2.getX();
-//			subaltura = coluna.getHeight() - c2.getY();
-//			
-//			p2 = coluna.getSubimage(c2.getX()-2, c2.getY()-2,sublargura,subaltura);
 			
 			ImageIO.write(coluna, "jpg", outputfile2);
 			
@@ -191,13 +181,6 @@ public class TrataImagem {
 			
 			tracos(coluna,85,114);	
 			
-//			Ponto c3 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
-//			
-//			sublargura = coluna.getWidth() - c3.getX();
-//			subaltura = coluna.getHeight() - c3.getY();
-//			
-//			p3 = coluna.getSubimage(c3.getX()-2, c3.getY()-2,sublargura,subaltura);
-			
 			ImageIO.write(coluna, "jpg", outputfile3);
 			
 			//----------------------------------------------------------
@@ -206,13 +189,6 @@ public class TrataImagem {
 			
 			tracos(coluna,85,114);	
 			
-//			Ponto c4 = busca_n2(0,0,coluna.getWidth()-1,coluna.getHeight()-1);
-//			
-//			sublargura = coluna.getWidth() - c4.getX();
-//			subaltura = coluna.getHeight() - c4.getY();
-//			
-//			p4 = coluna.getSubimage(c4.getX()-2, c4.getY()-2,sublargura,subaltura);
-			
 			ImageIO.write(coluna, "jpg", outputfile4);
 			
 			//----------------------------------------------------------
@@ -220,7 +196,6 @@ public class TrataImagem {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		} finally {
-			saida.close();
 			System.out.println("fim");
 
 		}
@@ -235,6 +210,53 @@ public class TrataImagem {
 		Graphics2D g2d = (Graphics2D) four2.getGraphics();
 		g2d.drawImage(four2, at, null);
 		g2d.dispose();
+	}
+	
+	private void quadrantes(BufferedImage img, int xini, int yini) throws IOException {
+		
+		BufferedImage pedaco = null;
+		int xx = xini;
+		int yy = yini;
+		
+		for(int x=0; x<25; x++) {
+		
+			for(int y=0; y<5; y++) {
+				pedaco = img.getSubimage(xx+38, yy, 38, 62);
+				//File outputfile1 = new File("/home/eric/cadernos/p1("+x+"-"+y+").jpg");
+				//ImageIO.write(pedaco, "jpg", outputfile1);
+				resultados[x][y] = contagem(pedaco);
+				System.out.println("==> x="+x+", y="+y+" "+resultados[x][y]);
+				xx+=(38*2);
+			}
+			
+			xx=xini;
+			yy+=62;
+			
+		}
+		
+	}
+	
+	private int contagem(BufferedImage img) {
+		int pixels = 0;
+		int densidade = img.getWidth()*img.getHeight();
+		int p=0;
+		int x=0;
+		int y=0;
+		//System.out.println("dens x="+img.getWidth()+", y="+img.getHeight());
+		try {
+		for(x=0;x<img.getWidth()-1;x++) {
+			for(y=0; y<img.getHeight()-1; y++) {
+				p = img.getRGB(x, y);
+				//System.out.println("x="+x+", y="+y);
+				if (p != -1) {
+					pixels++;
+				}
+			}
+		}
+		} catch(Exception e) {
+			System.out.println("erro x="+x+", y="+y);
+		}
+		return pixels > ((densidade/100)*this.perc_preenche) ? 1:0;
 	}
 	
 	private void tracos(BufferedImage img, int xini, int yini) {
@@ -277,17 +299,6 @@ public class TrataImagem {
 							retorno.setX(n0x);
 							retorno.setY(n0y);
 							z = 1;
-							//log = String.format("ponto  = %1$d, %2$d ", n0x, n0y);
-							//System.out.println(log);
-							for (int w = 0; w <= log.length() - 1; w++) {
-								try {
-									saida.write(log.charAt(w));
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}						
-							
 							break;
 						}
 					}
@@ -326,13 +337,6 @@ public class TrataImagem {
 							retorno.setX(n0x);
 							retorno.setY(n0y);
 							z = 1;
-							for (int w = 0; w <= log.length() - 1; w++) {
-								try {
-									saida.write(log.charAt(w));
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							}						
 							break;
 						}
 					}
