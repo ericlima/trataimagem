@@ -8,7 +8,7 @@ public class Teste {
 		
 		try {
 			
-			imagem.processa("/home/eric/cadernos/folhas/folha2.tif");
+			imagem.processa("/home/eric/cadernos/folhas/folha3.tif");
 			//imagem.processa("/home/eric/cadernos/prova5t.jpg");
 			
 		} catch (Exception e) {
