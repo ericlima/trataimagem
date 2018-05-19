@@ -57,6 +57,7 @@ public class TrataImagem {
 		File outputfile5 = new File("/home/eric/cadernos/cbarra.jpg");
 		File outputfile6 = new File("/home/eric/cadernos/ausente.jpg");
 		File outputfile7 = new File("/home/eric/cadernos/binario.jpg");
+		File outputfile8 = new File("/home/eric/cadernos/final.jpg");
 
 		outputfile1.delete();
 		outputfile2.delete();
@@ -65,6 +66,7 @@ public class TrataImagem {
 		outputfile5.delete();
 		outputfile6.delete();
 		outputfile7.delete();
+		outputfile8.delete();
 
 		try {
 
@@ -97,13 +99,13 @@ public class TrataImagem {
 
 			// procura bloco 2
 
-			Ponto ponto2 = busca_blocao(max_x / 2, 0, max_x - (max_x / 2), max_y / 2);
+			Ponto ponto2 = busca_blocao(max_x / 2, 0, (max_x - (max_x / 2)), (max_y / 2));
 
 			System.out.println(ponto2);
 
 			// procura bloco 3
 
-			Ponto ponto3 = busca_blocao(0, max_y / 2, max_x - (max_x / 2), 1700);
+			Ponto ponto3 = busca_blocao(0, (max_y / 2), (max_x - (max_x / 2)), 1700);
 
 			System.out.println(ponto3);
 
@@ -115,7 +117,7 @@ public class TrataImagem {
 			int altura = 1700;
 
 			// verifica se necessita rotacao
-			if (false && (ponto1.getY() != ponto2.getY())) {
+			if ((ponto1.getY() != ponto2.getY())) {
 
 				double cat1 = (double) (ponto2.getX() - ponto1.getX());
 
@@ -138,9 +140,17 @@ public class TrataImagem {
 				} else {
 					rotaciona(image, hypt * -1);
 				}
+				
+				ImageIO.write(image, "jpg", outputfile8);
 
 			}
 
+			//------------------------------------------------------------------
+			//ausente
+			 coluna = image.getSubimage(ponto2.getX()-107, ponto2.getY()+1840, 38, 40);
+             
+             ImageIO.write(coluna, "jpg", outputfile6);
+			
 			// ----------------------------------------------------------
 			// pega codigo binario
 
@@ -245,13 +255,13 @@ public class TrataImagem {
 		
 		BufferedImage pedaco = null;
 
-		for (int x = 0; x < img.getWidth() ; x+=(offsetx*2)) {
-			if (offsetx>img.getWidth()) {
-				offsetx = img.getWidth()-1;
+		for (int x = 0; x < img.getWidth()-offsetx ; x+=(offsetx*2)) {
+			if (x>img.getWidth()) {
+				x = img.getWidth()-1;
 			}
 			pedaco = img.getSubimage(x, 0, offsetx, img.getHeight());
-			File outputfile1 = new File("/home/eric/cadernos/b1("+x+").jpg");
-			ImageIO.write(pedaco, "jpg", outputfile1);
+			//File outputfile1 = new File("/home/eric/cadernos/b1("+x+").jpg");
+			//ImageIO.write(pedaco, "jpg", outputfile1);
 			retorno += contagem(pedaco)==1?"1":"0";
 		}
 	
@@ -329,18 +339,20 @@ public class TrataImagem {
 
 	}
 
-	private Ponto busca_blocao(int xx, int yy, int ww, int hh) {
-		// System.out.println(String.format("%1$d %2$d %3$d %4$d", xx,yy,ww,hh));
-		Long initTime = System.nanoTime();
+	private Ponto busca_blocao(int xx, int yy, int ww, int hh) throws Exception {
 		Ponto retorno = new Ponto();
 		z = 0;
 		int n0x = 0;
 		int n0y = 0;
 		int p = 0;
 		try {
-			for (n0x = xx; n0x <= (xx + ww); n0x++) {
-				for (n0y = yy; n0y <= (yy + hh); n0y++) {
-					p = image.getRGB(n0x, n0y);
+			for (n0x = xx; n0x < (xx + ww); n0x++) {
+				for (n0y = yy; n0y < (yy + hh); n0y++) {
+					if ((n0x<image.getWidth()) && (n0y<image.getHeight())) {
+						p = image.getRGB(n0x, n0y);	
+					} else {
+						p = -1;
+					}					
 					if (p != -1) {
 						if (busca_n1(n0x, n0y)) {
 							retorno.setX(n0x);
@@ -358,12 +370,6 @@ public class TrataImagem {
 			System.out.println(log + ' ' + p);
 			throw e;
 		}
-		long endTime1 = System.nanoTime();
-
-		double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
-
-		System.out.println("tempo:" + seconds);
-
 		return retorno;
 	}
 
@@ -405,7 +411,21 @@ public class TrataImagem {
 		return retorno;
 	}
 
-	private boolean busca_n1(int x, int y) {
+	private boolean busca_n1(int x, int y) throws IOException {
+//		try {
+//		if ((x+blocao)>this.image.getWidth()) {
+//			return false;
+//		}
+//		if ((y+blocao)>this.image.getHeight()) {
+//			return false;
+//		}		
+//		BufferedImage pedaco = this.image.getSubimage(x, y, blocao, blocao);
+//		File outputfile = new File("/home/eric/cadernos/blocao(x"+x+")(y"+y+").jpg");
+//		ImageIO.write(pedaco, "jpg", outputfile);
+//		return contagem(pedaco)==1;
+//		} catch(Exception e) {
+//			throw e;
+//		}
 		int marca = 1;
 		for (int _x = 0; _x <= blocao; _x++) {
 			for (int _y = 0; _y <= blocao; _y++) {
