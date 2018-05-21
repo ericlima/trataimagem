@@ -22,7 +22,7 @@ public class TrataImagem {
 
 	int perc_preenche = 30; // 30%
 
-	int blocao = 38;
+	int blocao = 50;
 	int bloquinho = 33;
 
 	int z = 0;
@@ -89,7 +89,7 @@ public class TrataImagem {
 
 			// procura bloco1
 
-			Ponto ponto1 = busca_blocao(0, 0, max_x / 2, max_y / 2);
+			Ponto ponto1 = busca_blocao(0, 0, max_x / 2, max_y / 2, 1);
 
 			if ((ponto1.getX() == 0) && (ponto1.getY() == 0)) {
 				throw new Exception("ponto1 não encontrado");
@@ -99,13 +99,13 @@ public class TrataImagem {
 
 			// procura bloco 2
 
-			Ponto ponto2 = busca_blocao(max_x / 2, 0, (max_x - (max_x / 2)), (max_y / 2));
+			Ponto ponto2 = busca_blocao(max_x / 2, 0, (max_x - (max_x / 2)), (max_y / 2), 2);
 
 			System.out.println(ponto2);
 
 			// procura bloco 3
 
-			Ponto ponto3 = busca_blocao(0, (max_y / 2), (max_x - (max_x / 2)), 1700);
+			Ponto ponto3 = busca_blocao(0, (max_y / 2), (max_x - (max_x / 2)), 1700, 2);
 
 			System.out.println(ponto3);
 
@@ -117,7 +117,7 @@ public class TrataImagem {
 			int altura = 1700;
 
 			// verifica se necessita rotacao
-			if ((ponto1.getY() != ponto2.getY())) {
+			if (false & (ponto1.getY() != ponto2.getY())) {
 
 				double cat1 = (double) (ponto2.getX() - ponto1.getX());
 
@@ -140,37 +140,37 @@ public class TrataImagem {
 				} else {
 					rotaciona(image, hypt * -1);
 				}
-				
+
 				ImageIO.write(image, "jpg", outputfile8);
 
 			}
 
-			//------------------------------------------------------------------
-			//ausente
-			 coluna = image.getSubimage(ponto2.getX()-107, ponto2.getY()+1840, 38, 40);
-             
-             ImageIO.write(coluna, "jpg", outputfile6);
-			
+			// ------------------------------------------------------------------
+			// ausente
+			coluna = image.getSubimage(ponto2.getX() - 107, ponto2.getY() + 1840, 38, 40);
+
+			ImageIO.write(coluna, "jpg", outputfile6);
+
 			// ----------------------------------------------------------
 			// pega codigo binario
 
 			coluna = image.getSubimage(0, ponto3.getY() - 120, image.getWidth(), 50);
 
-			//tracos(coluna, 0, 0, 39, 62);
+			// tracos(coluna, 0, 0, 39, 62);
 
 			String codBinario = binario(coluna, 0, 0, 39, 62);
-			
-			//int cod2 = Integer.parseInt(codBinario,2);
 
-			codBinario = codBinario.substring(0,codBinario.length()-3);
-			
+			// int cod2 = Integer.parseInt(codBinario,2);
+
+			codBinario = codBinario.substring(0, codBinario.length() - 3);
+
 			int cod2 = binaryToInteger(codBinario);
-			
-			System.out.println("binario: "+ codBinario + " (" + cod2 + ")");
-			
+
+			System.out.println("binario: " + codBinario + " (" + cod2 + ")");
+
 			ImageIO.write(coluna, "jpg", outputfile7);
 
-						// ----------------------------------------------------------
+			// ----------------------------------------------------------
 			// pega codigo barras
 			coluna = image.getSubimage(ponto2.getX() - 627, ponto2.getY() - 445, 627, 445);
 
@@ -230,14 +230,14 @@ public class TrataImagem {
 	}
 
 	public int binaryToInteger(String binary) {
-	    char[] numbers = binary.toCharArray();
-	    int result = 0;
-	    for(int i=numbers.length - 1; i>=0; i--)
-	        if(numbers[i]=='1')
-	            result += Math.pow(2, (numbers.length-i - 1));
-	    return result;
+		char[] numbers = binary.toCharArray();
+		int result = 0;
+		for (int i = numbers.length - 1; i >= 0; i--)
+			if (numbers[i] == '1')
+				result += Math.pow(2, (numbers.length - i - 1));
+		return result;
 	}
-	
+
 	private void rotaciona(BufferedImage four2, double graus) {
 		AffineTransform at = new AffineTransform();
 		at.translate(four2.getWidth() / 2, four2.getHeight() / 2);
@@ -252,19 +252,19 @@ public class TrataImagem {
 	private String binario(BufferedImage img, int xini, int yini, int offsetx, int offsety) throws IOException {
 
 		String retorno = "";
-		
+
 		BufferedImage pedaco = null;
 
-		for (int x = 0; x < img.getWidth()-offsetx ; x+=(offsetx*2)) {
-			if (x>img.getWidth()) {
-				x = img.getWidth()-1;
+		for (int x = 0; x < img.getWidth() - offsetx; x += (offsetx * 2)) {
+			if (x > img.getWidth()) {
+				x = img.getWidth() - 1;
 			}
 			pedaco = img.getSubimage(x, 0, offsetx, img.getHeight());
-			//File outputfile1 = new File("/home/eric/cadernos/b1("+x+").jpg");
-			//ImageIO.write(pedaco, "jpg", outputfile1);
-			retorno += contagem(pedaco)==1?"1":"0";
+			// File outputfile1 = new File("/home/eric/cadernos/b1("+x+").jpg");
+			// ImageIO.write(pedaco, "jpg", outputfile1);
+			retorno += contagem(pedaco, this.perc_preenche) == 1 ? "1" : "0";
 		}
-	
+
 		return retorno;
 
 	}
@@ -281,7 +281,7 @@ public class TrataImagem {
 				pedaco = img.getSubimage(xx + offsetx, yy, offsetx, offsety);
 				// File outputfile1 = new File("/home/eric/cadernos/p1("+x+"-"+y+").jpg");
 				// ImageIO.write(pedaco, "jpg", outputfile1);
-				resultados[x][y] = contagem(pedaco);
+				resultados[x][y] = contagem(pedaco, this.perc_preenche);
 				System.out.println("==> x=" + x + ", y=" + y + " " + resultados[x][y]);
 				xx += (offsetx * 2);
 			}
@@ -293,7 +293,7 @@ public class TrataImagem {
 
 	}
 
-	private int contagem(BufferedImage img) {
+	private int contagem(BufferedImage img, int perc) {
 		int pixels = 0;
 		int densidade = img.getWidth() * img.getHeight();
 		int p = 0;
@@ -313,7 +313,7 @@ public class TrataImagem {
 		} catch (Exception e) {
 			System.out.println("erro x=" + x + ", y=" + y);
 		}
-		return pixels > ((densidade / 100) * this.perc_preenche) ? 1 : 0;
+		return pixels > ((densidade / 100) * perc) ? 1 : 0;
 	}
 
 	private void tracos(BufferedImage img, int xini, int yini, int offsetx, int offsety) {
@@ -339,31 +339,73 @@ public class TrataImagem {
 
 	}
 
-	private Ponto busca_blocao(int xx, int yy, int ww, int hh) throws Exception {
+	private Ponto busca_blocao(int xx, int yy, int ww, int hh, int quadrante) throws Exception {
 		Ponto retorno = new Ponto();
 		z = 0;
 		int n0x = 0;
 		int n0y = 0;
 		int p = 0;
 		try {
-			for (n0x = xx; n0x < (xx + ww); n0x++) {
-				for (n0y = yy; n0y < (yy + hh); n0y++) {
-					if ((n0x<image.getWidth()) && (n0y<image.getHeight())) {
-						p = image.getRGB(n0x, n0y);	
-					} else {
-						p = -1;
-					}					
-					if (p != -1) {
-						if (busca_n1(n0x, n0y)) {
-							retorno.setX(n0x);
-							retorno.setY(n0y);
-							z = 1;
-							break;
+			if (quadrante == 1) {
+				for (n0x = xx; n0x < (xx + ww); n0x++) {
+					for (n0y = yy; n0y < (yy + hh); n0y++) {
+						if ((n0x < image.getWidth()) && (n0y < image.getHeight())) {
+							p = image.getRGB(n0x, n0y);
+						} else {
+							p = -1;
+						}
+						if (p != -1) {
+							if (busca_n1(n0x, n0y)) {
+								retorno.setX(n0x);
+								retorno.setY(n0y);
+								z = 1;
+								break;
+							}
 						}
 					}
+					if (z == 1)
+						break;
 				}
-				if (z == 1)
-					break;
+			} else if (quadrante == 2) {
+				for (n0x = xx + ww; n0x > 0; n0x--) {
+					for (n0y = yy + hh; n0y > 0; n0y--) {
+						if ((n0x < image.getWidth()) && (n0y < image.getHeight())) {
+							p = image.getRGB(n0x, n0y);
+						} else {
+							p = -1;
+						}
+						if (p != -1) {
+							if (busca_n1(n0x, n0y)) {
+								retorno.setX(n0x);
+								retorno.setY(n0y);
+								z = 1;
+								break;
+							}
+						}
+					}
+					if (z == 1)
+						break;
+				}
+			} else if (quadrante == 3) {
+				for (n0x = xx; n0x < (xx + ww); n0x++) {
+					for (n0y = yy + hh; n0y > 0; n0y--) {
+						if ((n0x < image.getWidth()) && (n0y < image.getHeight())) {
+							p = image.getRGB(n0x, n0y);
+						} else {
+							p = -1;
+						}
+						if (p != -1) {
+							if (busca_n1(n0x, n0y)) {
+								retorno.setX(n0x);
+								retorno.setY(n0y);
+								z = 1;
+								break;
+							}
+						}
+					}
+					if (z == 1)
+						break;
+				}
 			}
 		} catch (Exception e) {
 			log = String.format("erro = %1$d, %2$d", n0x, n0y);
@@ -412,32 +454,34 @@ public class TrataImagem {
 	}
 
 	private boolean busca_n1(int x, int y) throws IOException {
-//		try {
-//		if ((x+blocao)>this.image.getWidth()) {
-//			return false;
-//		}
-//		if ((y+blocao)>this.image.getHeight()) {
-//			return false;
-//		}		
-//		BufferedImage pedaco = this.image.getSubimage(x, y, blocao, blocao);
-//		File outputfile = new File("/home/eric/cadernos/blocao(x"+x+")(y"+y+").jpg");
-//		ImageIO.write(pedaco, "jpg", outputfile);
-//		return contagem(pedaco)==1;
-//		} catch(Exception e) {
-//			throw e;
-//		}
-		int marca = 1;
-		for (int _x = 0; _x <= blocao; _x++) {
-			for (int _y = 0; _y <= blocao; _y++) {
-				if (image.getRGB(_x + x, _y + y) == -1) {
-					marca = 0;
-					break;
-				}
+		try {
+			if ((x + blocao) > this.image.getWidth()) {
+				return false;
 			}
-			if (marca == 0)
-				break;
+			if ((y + blocao) > this.image.getHeight()) {
+				return false;
+			}
+			BufferedImage pedaco = this.image.getSubimage(x, y, blocao, blocao);
+			if (contagem(pedaco, 80) == 1) {
+				File outputfile = new File("/home/eric/cadernos/blocao(x" + x + ")(y" + y + ").jpg");
+				ImageIO.write(pedaco, "jpg", outputfile);
+			}
+			return contagem(pedaco, 80) == 1;
+		} catch (Exception e) {
+			throw e;
 		}
-		return marca == 1;
+		// int marca = 1;
+		// for (int _x = 0; _x <= blocao; _x++) {
+		// for (int _y = 0; _y <= blocao; _y++) {
+		// if (image.getRGB(_x + x, _y + y) == -1) {
+		// marca = 0;
+		// break;
+		// }
+		// }
+		// if (marca == 0)
+		// break;
+		// }
+		// return marca == 1;
 	}
 
 	private boolean busca_n3(int x, int y) {

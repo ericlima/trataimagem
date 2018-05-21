@@ -31,20 +31,15 @@ public class Teste {
 		org.apache.log4j.BasicConfigurator.configure();
 
 		TrataImagem imagem = new TrataImagem();
-
-		
 		
 		try {
-			imagem.processa("/home/eric/cadernos/pdfs/674550(out)1.png");
-			
-			if (true)
-				return;
+			//imagem.processa("/home/eric/cadernos/pdfs/672676(out).png");
 			
 			String someImage = "/home/eric/cadernos/pdfs/cbarra.jpg";
 			String someImageIn = "/home/eric/cadernos/pdfs/674550.pdf";
 			String someImageOut = "/home/eric/cadernos/pdfs/674550(out).jpg";
 
-			String pdfFile = "/home/eric/cadernos/pdfs/674550.pdf";
+			String pdfFile = "/home/eric/cadernos/pdfs/673886.pdf";
 
 			// //config option 1:convert all document to image
 			// String [] args_1 = new String[3];
@@ -71,7 +66,7 @@ public class Teste {
 			// //logger.error(e.getMessage(),e);
 			// }
 
-			String outputPrefix = "/home/eric/cadernos/pdfs/674550(out)";
+			String outputPrefix = "/home/eric/cadernos/pdfs/673886(out)";
 			String imageFormat = "png";
 			String password = "";
 			int startPage = 1;
@@ -82,7 +77,7 @@ public class Teste {
 		    float cropBoxUpperRightX = 0.0F;
 		    float cropBoxUpperRightY = 0.0F;
 		    boolean showTime = false;
-		    int dpi = 200;
+		    int dpi = 300;
 //		    try
 //		    {
 //		      dpi = Toolkit.getDefaultToolkit().getScreenResolution();
@@ -133,7 +128,14 @@ public class Teste {
 					document.close();
 				}
 			}
+			
+			Long initTime = System.nanoTime();
+			imagem.processa(outputPrefix+"1.png");
+			Long endTime1 = System.nanoTime();
 
+			double seconds = ((double) (endTime1 - initTime)) / 1000000000.0;
+
+			System.out.println("tempo total =============>:" + seconds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
